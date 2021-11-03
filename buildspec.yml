@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+    install:
+        commands:
+            - echo SourceBucket $SourceBucket
+            - echo S3ObjectKey $S3ObjectKey
+            - echo creating source bundle
+            - zip ../$S3ObjectKey -r * .[^.]*
+            - echo Zipped the repo, Created Source Bundle
+    post_build:
+        commands:
+            - echo Entered the Upload phase...
+            - aws s3 rm s3://$SourceBucket/$S3ObjectKey
+            - aws s3 cp ./$S3ObjectKey s3://$SourceBucket/
+            - echo Upload completed on `date`
